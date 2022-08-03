@@ -22,7 +22,7 @@ It can also select random elements out of an `Enum` as well.
  
 The state of the generator can be saved to an `int[]` to be handled seperately or written directly to a `Stream` and can be loaded the same ways.
 
-The class provides a `ThreadStatic` instance for sharing the instance across an entire application.
+The class provides a `ThreadStatic` instance for sharing a single instance across an entire application.
 
 The seed of the class can be provided in either the form of an integer or a string
 
