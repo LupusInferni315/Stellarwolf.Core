@@ -3,6 +3,7 @@ The core library of the Stellar Wolf Framework
 
 # Chaos Engine
 The Chaos Engine is a multipurpose Pseudo-Random Number Generator
+
 It contains the ability to generate singular, as well as fill and create arrays of
  - 32-bit integers (int)
  - Single-precision floating-point numbers (float)
