@@ -44,7 +44,7 @@ namespace StellarWolf.Core
         /// <param name="type">The number of sides a die in the set has.</param>
         public Dice ( int count, DieType type )
         {
-            m_Count = count;
+            m_Count = Math.Max ( 1, count );
             m_Type = type;
         }
 
@@ -82,6 +82,8 @@ namespace StellarWolf.Core
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static int Roll ( int count, int sides, int modifier = 0 )
         {
+            if( count < 1 )
+                throw new ArgumentOutOfRangeException ( "count", "There cannot be less than 1 die to roll." );
             if ( sides < 1 )
                 throw new ArgumentOutOfRangeException ( "sides", "There cannot be less than 1 side on the dice." );
             return ChaosEngine.Shared.NextInteger ( count, ( count * sides ) + 1 ) + modifier;
@@ -110,6 +112,8 @@ namespace StellarWolf.Core
         /// <returns>An array containing each roll in the set.</returns>
         public static int [] Rolls(int count, int sides)
         {
+            if( count < 1 )
+                throw new ArgumentOutOfRangeException ( "count", "There cannot be less than 1 die to roll." );
             if ( sides < 1 )
                 throw new ArgumentOutOfRangeException ( "sides", "There cannot be less than 1 side on the dice." );
             return ChaosEngine.Shared.NextIntegers ( 1, sides + 1, count );
