@@ -24,7 +24,7 @@ namespace StellarWolf.Core
         private readonly int [] m_SeedArray = new int [ 56 ];
         private object m_StateLock = new object ();
 
-        [ThreadStatic] private static ChaosEngine m_Shared;
+        private static ChaosEngine m_Shared;
 
         #endregion
 
@@ -1088,30 +1088,33 @@ namespace StellarWolf.Core
 
         private int NextSample ()
         {
-            int locINext = m_INext;
-            int locINextP = m_INextP;
-
-            if ( ++locINext >= 56 )
-                locINext = 1;
-
-            if ( ++locINextP >= 56 )
-                locINextP = 1;
-
-            int retVal = m_SeedArray [ locINext ] - m_SeedArray [ locINextP ];
-
-            if ( retVal == int.MaxValue )
-                retVal--;
-
-            if ( retVal < 0 )
-                retVal += int.MaxValue;
 
             lock ( m_StateLock )
             {
+                int locINext = m_INext;
+                int locINextP = m_INextP;
+
+                if ( ++locINext >= 56 )
+                    locINext = 1;
+
+                if ( ++locINextP >= 56 )
+                    locINextP = 1;
+
+                int retVal = m_SeedArray [ locINext ] - m_SeedArray [ locINextP ];
+
+                if ( retVal == int.MaxValue )
+                    retVal--;
+
+                if ( retVal < 0 )
+                    retVal += int.MaxValue;
+
                 m_SeedArray [ locINext ] = retVal;
                 m_INext = locINext;
                 m_INextP = locINextP;
+                return retVal;
+
             }
-            return retVal;
+
         }
 
         #endregion
@@ -1138,7 +1141,7 @@ namespace StellarWolf.Core
         /// Write the current state of the <seealso cref="ChaosEngine"/> to a <seealso cref="Stream"/>
         /// </summary>
         /// <param name="stream">The stream to write the state to.</param>
-        /// <exception cref="NotSupportedException">The stream must be writable.</exception>
+        /// <exception cref="NotSupportedException"></exception>
         public void SaveState ( Stream stream )
         {
             try
@@ -1156,7 +1159,7 @@ namespace StellarWolf.Core
         /// Load an existing <seealso cref="ChaosEngine"/> state to the instance.
         /// </summary>
         /// <param name="state">The state of a <seealso cref="ChaosEngine"/> to load.</param>
-        /// <exception cref="Exception">state must be 59 elements in size.</exception>
+        /// <exception cref="Exception"></exception>
         public void LoadState ( int [] state )
         {
 
@@ -1181,8 +1184,8 @@ namespace StellarWolf.Core
         /// Load an existing <seealso cref="ChaosEngine"/> state from a <seealso cref="Stream"/>
         /// </summary>
         /// <param name="stream">The stream to read the state from.</param>
-        /// <exception cref="NotSupportedException">The stream must be readable.</exception>
-        /// <exception cref="Exception">state must be 59 elements in size.</exception>
+        /// <exception cref="NotSupportedException"></exception>
+        /// <exception cref="Exception"></exception>
         public void LoadState ( Stream stream )
         {
             try
