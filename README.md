@@ -40,10 +40,10 @@ The enum is used in conjunction with the `Dice` struct to store the count and ty
 # Dice
 The `Dice` struct provides a way to store and roll dice.
 
-It also provides static methods to roll dice at runtime without the need to create a `Dice` object, it also allows the caller to roll 'Non-Standard' dice such as a D3.
+It also provides static methods to roll dice at runtime without the need to create a `Dice` object.
 
 # IWeighted
 An object that inherits from `IWeighted` defines a weight to be applied to the instance for controlling how often an element is selected when selecting random elements from a list.
 
 # WeightAttribute
-An enum value with a `WeightAttribute` defines a weight to be applied to the instance for controlling how often an element is selected when selecting random elements from the enum.
+An enum value with a `WeightAttribute` defines a weight to be applied to the value for controlling how often an element is selected when selecting random elements from an enum.
