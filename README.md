@@ -4,7 +4,7 @@ The core library of the Stellar Wolf Framework
 If you are working with Unity3D look at this library [StellarWolf.Core (Unity Compatible)](https://github.com/LupusInferni315/StellarWolf.Core-Unity-Compatible) instead
 
 # Chaos Engine
-The Chaos Engine is a multipurpose Pseudo-Random Number Generator
+The Chaos Engine is a thread-safe multipurpose Pseudo-Random Number Generator
 
 It contains the ability to generate singular, as well as fill and create arrays of
  - 32-bit integers (int)
@@ -25,7 +25,7 @@ It can also select random elements out of an `Enum` as well.
  
 The state of the generator can be saved to an `int[]` to be handled seperately or written directly to a `Stream` and can be loaded the same ways.
 
-The class provides a `ThreadStatic` instance for sharing a single instance across an entire application.
+The class provides a static instance for sharing a single instance across an entire application.
 
 The seed of the class can be provided in either the form of an integer or a string
  - If the seed is a string the class will attempt to convert it into an integer before seeding the generator (ie 315 is the same as "315").
