@@ -1,9 +1,9 @@
-#region Using Directives
+    #region Using Directives
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Runtime.Serialization.Formatters.Binary;
 
 #endregion
 
@@ -1163,11 +1163,11 @@ namespace StellarWolf.Core
         public void LoadState ( int [] state )
         {
 
+            if ( state.Length != 59 || state [ 3 ] != 0 )
+                throw new Exception ( "Chaos state is invalid or corrupted." );
+
             lock ( m_StateLock )
             {
-
-                if ( state.Length != 59 || state [ 3 ] != 0 )
-                    throw new Exception ( "Chaos state is invalid or corrupted." );
 
                 m_Seed = state [ 0 ];
                 m_INext = state [ 1 ];
