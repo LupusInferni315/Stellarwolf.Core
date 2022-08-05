@@ -7,17 +7,14 @@ using System;
 namespace StellarWolf.Core
 {
 
-    /// <summary>
-    /// A structure to store and roll dice.
-    /// </summary>
     [Serializable]
     public struct Dice : IComparable<Dice>, IEquatable<Dice>
     {
 
         #region Fields
-        
-        private readonly int m_Count;
-        private readonly DieType m_Type;
+
+        private int m_Count;
+        private int m_Sides;
 
         #endregion
 
@@ -31,7 +28,7 @@ namespace StellarWolf.Core
         /// <summary>
         /// The number of sides a die in the set has.
         /// </summary>
-        public DieType Type => m_Type;
+        public int Sides => m_Sides;
 
         #endregion
 
@@ -41,36 +38,52 @@ namespace StellarWolf.Core
         /// Initializes a new instance of Dice.
         /// </summary>
         /// <param name="count">The number of dice in the set. </param>
+        /// <param name="sides">The number of sides a die in the set has.</param>
+        public Dice ( int count, int sides )
+        {
+            m_Count = Mathf.Max ( 1, count );
+            m_Sides = Mathf.Max ( 1, sides );
+        }
+
+        /// <summary>
+        /// Initializes a new instance of Dice.
+        /// </summary>
+        /// <param name="count">The number of dice in the set. </param>
         /// <param name="type">The number of sides a die in the set has.</param>
         public Dice ( int count, DieType type )
         {
-            m_Count = Math.Max ( 1, count );
-            m_Type = type;
+            m_Count = Mathf.Max ( 1, count );
+            m_Sides = (int) type;
         }
 
         #endregion
 
         #region Methods
 
-        /// <summary>
-        /// Compares this instance to a specified dice and returns an indication of their relative values.
-        /// </summary>
-        /// <param name="dice">Dice to compare.</param>
-        /// <returns>A signed number indicating the relative values of this instance and <paramref name="dice"/></returns>
-        public int CompareTo ( Dice dice )
+        /// <inheritdoc/>
+        public int CompareTo ( Dice other )
         {
-            int c0 = ( (int) m_Type ).CompareTo ( (int) dice.m_Type );
-            return c0 != 0 ? c0 : m_Count.CompareTo ( dice.m_Count );
+            int c0 = ( m_Count * m_Sides ).CompareTo ( other.m_Count * other.m_Sides );
+            return c0 != 0 ? c0 : m_Count.CompareTo ( other.m_Count );
         }
 
-        /// <summary>
-        /// Rolls the set and returns the total ± the modifier.
-        /// </summary>
-        /// <param name="count">The number of dice in the set.</param>
-        /// <param name="type">The number of sides a die in the set has.</param>
-        /// <param name="modifier">The amount to add or subract from the total.</param>
-        /// <returns>The total ± the modifier.</returns>
-        public static int Roll ( int count, DieType type, int modifier = 0 ) => Roll ( count, (int) type, modifier );
+        /// <inheritdoc/>
+        public override bool Equals ( object obj ) => !( obj is null ) && obj is Dice dice && Equals ( dice );
+
+        /// <inheritdoc/>
+        public bool Equals ( Dice other ) => m_Count == other.m_Count && m_Sides == other.m_Sides;
+
+        /// <inheritdoc/>
+        public override int GetHashCode ()
+        {
+            unchecked
+            {
+                int hash = 59; // might change
+                hash = ( hash * 37 ) + m_Count.GetHashCode ();
+                hash = ( hash * 83 ) + m_Sides.GetHashCode ();
+                return hash;
+            }
+        }
 
         /// <summary>
         /// Rolls the set and returns the total ± the modifier.
@@ -82,27 +95,13 @@ namespace StellarWolf.Core
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static int Roll ( int count, int sides, int modifier = 0 )
         {
-            if( count < 1 )
-                throw new ArgumentOutOfRangeException ( "count", "There cannot be less than 1 die to roll." );
+
+            if ( count < 1 )
+                throw new ArgumentOutOfRangeException ( "count", "The number of dice being rolled cannot be less than 1." );
             if ( sides < 1 )
-                throw new ArgumentOutOfRangeException ( "sides", "There cannot be less than 1 side on the dice." );
+                throw new ArgumentOutOfRangeException ( "sides", "The number of sides on a die being rolled cannot be less than 1." );
             return ChaosEngine.Shared.NextInteger ( count, ( count * sides ) + 1 ) + modifier;
         }
-
-        /// <summary>
-        /// Rolls the set and returns the total ± the modifier.
-        /// </summary>
-        /// <param name="modifier">The amount to add or subract from the total.</param>
-        /// <returns>The total ± the modifier.</returns>
-        public int Roll ( int modifier = 0 ) => Roll ( m_Count, m_Type, modifier );
-
-        /// <summary>
-        /// Rolls the set and returns the individual rolls.
-        /// </summary>
-        /// <param name="count">The number of dice in the set.</param>
-        /// <param name="type">The number of sides a die in the set has.</param>
-        /// <returns>An array containing each roll in the set.</returns>
-        public static int [] Rolls ( int count, DieType type ) => Rolls ( count, (int) type );
 
         /// <summary>
         /// Rolls the set and returns the individual rolls.
@@ -110,43 +109,48 @@ namespace StellarWolf.Core
         /// <param name="count">The number of dice in the set.</param>
         /// <param name="sides">The number of sides a die in the set has.</param>
         /// <returns>An array containing each roll in the set.</returns>
-        public static int [] Rolls(int count, int sides)
+        public static int [] Rolls ( int count, int sides )
         {
-            if( count < 1 )
-                throw new ArgumentOutOfRangeException ( "count", "There cannot be less than 1 die to roll." );
+            if ( count < 1 )
+                throw new ArgumentOutOfRangeException ( "count", "The number of dice being rolled cannot be less than 1." );
             if ( sides < 1 )
-                throw new ArgumentOutOfRangeException ( "sides", "There cannot be less than 1 side on the dice." );
+                throw new ArgumentOutOfRangeException ( "sides", "The number of sides on a die being rolled cannot be less than 1." );
             return ChaosEngine.Shared.NextIntegers ( 1, sides + 1, count );
         }
+
+        /// <summary>
+        /// Rolls the set and returns the total ± the modifier.
+        /// </summary>
+        /// <param name="count">The number of dice in the set.</param>
+        /// <param name="type">The number of sides a die in the set has.</param>
+        /// <param name="modifier">The amount to add or subract from the total.</param>
+        /// <returns>The total ± the modifier.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public static int Roll ( int count, DieType type, int modifier = 0 ) => Roll ( count, (int) type, modifier );
+
+        /// <summary>
+        /// Rolls the set and returns the individual rolls.
+        /// </summary>
+        /// <param name="count">The number of dice in the set.</param>
+        /// <param name="sides">The number of sides a die in the set has.</param>
+        /// <returns>An array containing each roll in the set.</returns>
+        public static int [] Rolls ( int count, DieType type ) => Rolls ( count, (int) type );
+
+        /// <summary>
+        /// Rolls the set and returns the total ± the modifier.
+        /// </summary>
+        /// <param name="modifier">The amount to add or subract from the total.</param>
+        /// <returns>The total ± the modifier.</returns>
+        public int Roll ( int modifier = 0 ) => Roll ( Count, Sides, modifier );
 
         /// <summary>
         /// Rolls the set and returns the individual rolls.
         /// </summary>
         /// <returns>An array containing each roll in the set.</returns>
-        public int [] Rolls () => Rolls ( m_Count, m_Type );
+        public int [] Rolls () => Rolls ( Count, Sides );
 
         /// <inheritdoc/>
-        public override bool Equals ( object obj ) => !( obj is null ) && obj is Dice dice && Equals ( dice );
-
-        /// <inheritdoc/>
-        public bool Equals ( Dice dice ) => m_Count == dice.m_Count && m_Type == dice.m_Type;
-
-        /// <inheritdoc/>
-        public override int GetHashCode ()
-        {
-
-            unchecked
-            {
-                int hash = 17;
-                hash = ( hash * 31 ) + m_Count.GetHashCode ();
-                hash = ( hash * 31 ) + m_Type.GetHashCode ();
-                return hash;
-            }
-
-        }
-
-        /// <inheritdoc/>
-        public override string ToString () => $"{m_Count}{m_Type}";
+        public override string ToString () => $"{m_Count}d{m_Sides}";
 
         #endregion
 
